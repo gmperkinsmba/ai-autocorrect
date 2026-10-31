@@ -23,7 +23,7 @@ Turn on **Typing correction** and allow Accessibility access in System Settings.
 
 Undo restores the last full field snapshot and selection only while the field still matches. The one undo copy stays in memory until the next edit or quit. It is never saved.
 
-Choose **Humanize selected text** or **Humanize pasted text** in the menu. Set a local OpenAI-compatible API URL, find a model, and test the connection in the rewrite window. The default URL is `http://127.0.0.1:1234/v1`. The app contacts only a loopback address. It does not start a model server, use cloud keys, or follow redirects. Rewriting sends only the text you submit to that local API.
+Use the menu to humanize selected or pasted text. Use a local model server that accepts requests in the OpenAI format. Enter its API URL and model name in the rewrite window. Choose **Test connection** or **Find models**. The default URL is `http://127.0.0.1:1234/v1`. The app contacts only a loopback address. It does not start a model server, use cloud keys, or follow redirects. Rewriting sends only the text you submit to that local API.
 
 To rewrite a selection, select text in a supported app and press **Command+Shift+H**. This is the default shortcut. Change it under **Settings > Humanize shortcut**, then choose **Save settings**. If another app owns the shortcut, AI Autocorrect reports that it is unavailable.
 
