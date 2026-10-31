@@ -1,44 +1,62 @@
-# SloppyType
+# AI Autocorrect
 
-**First principle:** Help writers fix common typos. Keep control of their wording in their hands.
+**First principle:** Fix typing and rewrite selected text locally without losing the user's meaning.
 
-SloppyType checks text in its own editor. It fixes a small set of common typos at word boundaries. It remembers words you want to keep. You can undo the last correction and restore the original text and cursor.
+AI Autocorrect is a Mac menu bar app. It fixes supported typos as you type. When you choose Rewrite, it sends selected or pasted text only to the loopback model API you configure.
 
-## Run
+## Install and run
 
-Requires Python 3.10 or newer. No packages are needed.
+Build on a Mac with Swift 5.10 or newer and the macOS SDK:
 
 ```sh
-python3 server.py
+python3 build_app.py
+python3 install_app.py
 ```
 
-Open `http://127.0.0.1:8351`. The server listens on loopback only. Stop it with Ctrl+C.
+Open **AI Autocorrect** from Finder or add it to the Dock. The app runs in the menu bar. Choose **Quit AI Autocorrect** to close it. The build is ad-hoc signed and is not notarized. If macOS blocks the first launch, Control-click the app, choose **Open**, and confirm.
+
+To uninstall, move `~/Applications/AI Autocorrect.app` to the Trash. Your settings are in `~/Library/Application Support/AI Autocorrect/settings.json`. Remove that folder only if you also want to remove your local word list and preferences.
 
 ## Use
 
-Type in the SloppyType editor. A known typo is corrected when you press space or Enter. You can also press **Correct draft** to check the full text. **Undo correction** restores the exact previous text and cursor. If you keep typing after a correction, undo turns off so it cannot remove new text.
+Turn on **Typing correction** and allow Accessibility access in System Settings. Corrections run at a space or Return in supported text fields. AI Autocorrect uses macOS spelling suggestions, a short built-in list, and your own corrections. Add words to keep in Settings. Pause corrections from the menu at any time.
 
-Add words to keep them as written. Add an exception to protect a term that matches a supported typo. Add a custom correction as a one-word typo and replacement pair. Choose the entries to include before you export the dictionary.
+Undo restores the last full field snapshot and selection only while the field still matches. The one undo copy stays in memory until the next edit or quit. It is never saved.
 
-Settings can pause correction in the editor. The password input is a mock test surface and has no correction handler. The excluded app choice is also a test mode. The app does not read other fields, apps, or system text. This version is not an operating system typing hook.
+Choose **Humanize selected text** or **Humanize pasted text** in the menu. Set a local OpenAI-compatible API URL, find a model, and test the connection in the rewrite window. The default URL is `http://127.0.0.1:1234/v1`. The app contacts only a loopback address. It does not start a model server, use cloud keys, or follow redirects. Rewriting sends only the text you submit to that local API.
 
-## Data and privacy
+To rewrite a selection, select text in a supported app and press **Command+Shift+H**. This is the default shortcut. Change it under **Settings > Humanize shortcut**, then choose **Save settings**. If another app owns the shortcut, AI Autocorrect reports that it is unavailable.
 
-Your dictionary and pause setting are stored locally outside this folder in `~/.local/share/sloppytype/`. The folder is owner-only. Data is not encrypted. Remove that folder to clear local data. Text is not sent to a service.
+Start the local OpenAI-compatible model server you choose. In the rewrite window, enter its local API URL and model name. Choose **Test connection** or **Find models** to check the setup. This client needs no cloud account or API key.
 
-The built-in corrections are a short original demo list: `teh`, `recieve`, `seperate`, `adress`, and `occured`. They are not a bundled third-party dictionary.
+The rewrite prompt keeps names, numbers, dates, quotes, URLs, and code. If the model changes protected text, the rewrite is refused and the original stays editable. The optional tiny typo is on by default. It can remove one space from ordinary prose for about every 250 words. Review the result before using it.
 
-## Test
+The AI-style percentage is a rule-based signal. It shows which patterns matched. It is not a probability, and it cannot tell who wrote the text.
+
+Choose **Check writing** to score the pasted text on this Mac without sending it to a model or changing it. The check shows its percentage, matched patterns, and the same authorship limit.
+
+## Accessibility behavior
+
+Typing correction reads accessible field text only after checking the field role and app. Secure, password, credential-labeled, excluded, unknown, URL, and code contexts are skipped. Accessibility support varies by app. If a field does not allow a safe selection edit, the app leaves it unchanged.
+
+## Privacy and limits
+
+The app does not use a key event tap, save typed text, or log it.
+
+The settings file is stored outside this folder with owner-only permissions. It contains preferences and user word entries, not text. Humanizing uses the local endpoint you choose. The app does not inspect or control that endpoint's storage behavior.
+
+AI Autocorrect is packaged for macOS only. Source compatibility on other systems is untested. No Linux or Unix build is provided.
+
+## Development
+
+Run the native behavior checks and compile the app:
 
 ```sh
-python3 -m unittest discover -s tests -v
+swift run -Xswiftc -enable-testing AIAutocorrectChecks
+swift build --target AIAutocorrect
 ```
 
-Tests check typo fixes, exact undo data, dictionary exceptions, and export selection. They also check pause behavior, sensitive mock surfaces, invalid requests, missing request tokens, invalid origins, and payload limits.
-
-## Limits
-
-SloppyType supports only its own browser editor. It does not run in other apps or read password fields. This demo does not validate market fit or user outcomes.
+The app has no browser mode or manual server launch path.
 
 ## License
 

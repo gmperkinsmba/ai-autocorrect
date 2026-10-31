@@ -1,21 +1,23 @@
 # Context
 
-## Writer
+**First principle:** Fix typing and rewrite selected text locally without losing the user's meaning.
 
-A person typing text in the SloppyType editor.
+## Typing correction
 
-## Correction
+AI Autocorrect watches Accessibility value-change notifications for supported editable fields. It reads the current field only after rejecting secure, credential-labeled, unknown, and excluded controls. At a typed space or Return, it can replace one word through the selected-text range. It never captures keyboard events or submits text.
 
-A deterministic replacement of one supported typo at a word boundary. The app stores the exact text and selection before a correction so undo can restore both.
+## User dictionary
 
-## Dictionary entry
+The user can keep a word as written or add a one-word typo-to-replacement pair. User settings override the short built-in correction list. The user can pause typing correction at any time.
 
-A user-owned word to keep as written, an exception that suppresses a built-in typo, or a custom typo-to-replacement pair. Export includes only entries the user selects.
+## Undo
 
-## Surface
+One exact field snapshot and selection stay in memory after a correction. Undo restores them only while the field is unchanged. The snapshot is cleared after later edits or when the app quits. It is not written to disk.
 
-The built-in editor is the only supported surface. Password and excluded-app options are mock test contexts. No OS or other-app interception exists.
+## Humanizer
 
-## Local store
+Selected or pasted text goes only to a user-configured loopback OpenAI-compatible API after an explicit rewrite action. The app caps request and response sizes, rejects redirects, and requires protected names, numbers, dates, quotes, URLs, and code to remain in the result. A failed check leaves the original editable.
 
-SQLite holds user entries and the pause setting under the user's local data folder. No text or entries leave the device.
+## Surface limits
+
+Accessibility support differs across apps. Secure, password, credential-labeled, unknown, excluded, URL, and code contexts are skipped. AI Autocorrect is a native Mac menu bar app. There is no browser or server mode. The owner-only settings file lives at `~/Library/Application Support/AI Autocorrect/settings.json`. It stores preferences and user dictionary entries, not typed text, selections, model output, or logs.
